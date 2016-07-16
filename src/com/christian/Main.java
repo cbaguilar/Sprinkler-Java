@@ -12,17 +12,15 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 
-/*main sprinkler class, includes GUI.
- * test
+/*Main sprinkler class, includes GUI.
+ * An effort was made to remove most logic from here
  * 
  */
 
 public class Main {
 
 
-    Boolean[][] allDays;
-    String[][] allTimes;
-    String[] allStartTimes;
+
 
     Main parent;
     /*Here is the place where all of the components are declared.
@@ -105,16 +103,12 @@ public class Main {
         "Sunday"
     };
 
-
     /*Direct control section, panels and buttons for direct control.
      * 
      */
     JButton control;
     JToggleButton onoff;
     JComboBox < Object[] > sprinklercombo;
-
-
-
 
 
     /*Basically everything that is in the main class...
@@ -124,36 +118,17 @@ public class Main {
 
 
 
-
-
-
-
     Main() {
-
-        allDays = new Boolean[3][12];
-        allTimes = new String[3][12];
-        allStartTimes = new String[12];
-
-
-
         //engine
         final SprinklerEngine engine = new SprinklerEngine(this);
 
-
         //set the tabs
         tabs = new JTabbedPane();
-
-
-
         /*
-         * Direct control area
+         * TODO Direct control area
          */
 
         directControl = new JPanel();
-
-
-
-
 
 
         /*
@@ -169,19 +144,12 @@ public class Main {
             System.out.println(e);
         }
 
-
         help.add(para);
-
-
-
-
 
         //Set up main sprinkler programming panel
 
-
-
-
         //image of the house
+        
         ImageIcon icon = new ImageIcon("src/res/house2.png");
 
         programSprinklers = new JPanel();
@@ -192,27 +160,21 @@ public class Main {
         sprinklerList = new JPanel();
         outputPan = new JPanel();
 
-
         //adding the little tabs..
 
         tabs.addTab("Program", programSprinklers);
         tabs.addTab("Direct Control", directControl);
         tabs.addTab("Help", help);
 
-
-        //start setting values of text panes
         output = new JTextPane();
         output.setText("Output");
 
         connStatus = new JLabel(" Not Connected");
         enabled = new JLabel(" Enabled");
-
+        
         programs = new JComboBox<String>(programsList);
         programs.addActionListener(engine);
         programs.setEnabled(false);
-
-
-
 
         custInput = new JTextField(30);
         address = new JTextField(10);
@@ -221,7 +183,6 @@ public class Main {
         custInput.setText("Command:");
         address.setText("192.168.2.70");
         port.setText("42001");
-
 
         send = new JButton("Send");
         connect = new JButton("Connect");
@@ -236,10 +197,7 @@ public class Main {
 
         asprinklers = new ArrayList < JLabel > ();
         asprinklerTime = new ArrayList < JTextField > ();
-        //asprinklerEnabled = new ArrayList<JRadioButton>();
         asprinklerPanel = new ArrayList < JPanel > ();
-
-
 
         for (int i = 0; i < 12; i++) {
             GridLayout g = new GridLayout();
@@ -248,22 +206,13 @@ public class Main {
             asprinklerPanel.add(new JPanel());
             asprinklers.add(new JLabel((i + 1) + ": " + sprinkLabels[i]));
 
-
             jtf.setEnabled(false);
             jtf.addActionListener(engine);
 
             asprinklerTime.add(jtf);
-            //asprinklerEnabled.add(new JRadioButton()); not using this as mentioned before
-
             asprinklerPanel.get(i).setLayout(g);
-
             asprinklerPanel.get(i).add(asprinklers.get(i));
             asprinklerPanel.get(i).add(asprinklerTime.get(i));
-            //asprinklerPanel.get(i).add(asprinklerEnabled.get(i));
-
-
-
-
             sprinklerList.add(asprinklerPanel.get(i));
         }
 
@@ -271,8 +220,6 @@ public class Main {
         daypanel.setLayout(new BoxLayout(daypanel, 1));
         daycheck = new ArrayList < JCheckBox > ();
         daypanels = new ArrayList < JPanel > ();
-
-
 
         for (int i = 0; i < 7; i++) {
             GridLayout g = new GridLayout();
@@ -283,8 +230,6 @@ public class Main {
 
             daycheck.add(jcb);
             daypanels.add(jp);
-
-
 
             JPanel current = daypanels.get(i);
             current.add(new JLabel(days[i]));
@@ -298,25 +243,17 @@ public class Main {
         timebox.add(new JLabel(":00  "));
         daypanel.add(timebox);
 
-
         map = new JPanel();
-
-        //map.setLayout();
         map.add(daypanel);
         map.add(sprinklerList);
         map.add(new JLabel(icon));
 
 
         BoxLayout box = new BoxLayout(programSprinklers, 1);
-        /*GridLayout gl2 = new GridLayout();
-        customMessage.setLayout(gl);
-        connInfo.setLayout(gl);*/
+
         programSprinklers.setLayout(box);
         sprinklerList.setLayout(new BoxLayout(sprinklerList, 1));
-
-        outputPan.setLayout(new GridLayout());
-
-
+        
         connInfo.add(address);
         connInfo.add(port);
         connInfo.add(connect);
@@ -325,15 +262,9 @@ public class Main {
 
         programbox.add(new JLabel("Program: "));
         programbox.add(programs);
-        //programbox.add(enabled);
-        //programbox.add(enabledProgram);
-        //programbox.add(new JLabel(" Time (24 hr format) "));
-        //programbox.add(time);
-        //programbox.add(new JLabel(":00  "));
         programbox.add(update);
-
-
-
+        
+        outputPan.setLayout(new GridLayout());
         outputPan.add(output);
 
         customMessage.add(custInput);
@@ -345,11 +276,9 @@ public class Main {
         programSprinklers.add(outputPan);
         programSprinklers.add(customMessage);
 
-
-
         JFrame frame = new JFrame("Christian's Sprinkler Pi Program!");
-
         frame.addWindowListener(new WindowAdapter() {
+        	
             public void windowClosing(WindowEvent e) {
                 try {
 
@@ -362,25 +291,16 @@ public class Main {
                     write("Something happened");
                     System.out.println("socket closing phailde");
                 }
-
             }
         });
 
         frame.setContentPane(tabs);
-
         frame.pack();
-
         frame.setVisible(true);
     }
 
-
-
     public static void main(String[] args) {
-
-
-
-
-        @
+    @
         SuppressWarnings("unused")
         Main main = new Main();
 
@@ -423,7 +343,6 @@ public class Main {
     }
 
     //~(:^(l))
-    //TODO finish multiple prigram setup nao!
     public void setProgram(ProgramObject program, int programNum) throws ParseException {
         SingleProgram Iprogram = program.programlist[programNum];
 
@@ -465,8 +384,6 @@ public class Main {
         } else {
             return false;
         }
-
-
     }
 
 
@@ -482,42 +399,29 @@ public class Main {
 
             for (int i = 0; i < 7; i++) {
                 daysj[i] = daycheck.get(i).isSelected();
-                allDays[pro][i] = (daycheck.get(i).isSelected());
+               // allDays[pro][i] = (daycheck.get(i).isSelected());
             }
         return daysj;
-
     }
 
-    public String[] getTimes(int pro) {
-
+    public String[] getTimes() {
 
         String[] timesj = new String[12];
-        if (programs.getSelectedIndex() == pro) {
+        if (true) {
             for (int i = 0; i < 12; i++) {
                 String t = asprinklerTime.get(i).getText();
 
                 if (t.equals("")) {
                     timesj[i] = "0";
-                    allTimes[pro][i] = "0";
+                    //allTimes[pro][i] = "0";
                 } else {
                     timesj[i] = t;
-                    allTimes[pro][i] = t;
+                    //allTimes[pro][i] = t;
                 }
-            }
-        } else {
-            for (int i = 0; i < 12; i++) {
-                if (allTimes[pro][i] != null) {
-                    timesj[i] = allTimes[pro][i];
-                } else {
-                    allTimes[pro][i] = asprinklerTime.get(i).getText();
-                    timesj[i] = allTimes[pro][i];
-                }
-
             }
         }
-        return timesj;
+       return timesj;
     }
-
 
     public void enable(boolean tf) {
         StartTime.setEnabled(tf);
@@ -530,15 +434,5 @@ public class Main {
         for (JCheckBox jcb: daycheck) {
             jcb.setEnabled(tf);
         }
-
-
-
-
-
     }
-
-
-
-
-
 }

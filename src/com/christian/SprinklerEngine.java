@@ -9,6 +9,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+
 public class SprinklerEngine implements ActionListener {
 
     Main parent;
@@ -17,7 +18,6 @@ public class SprinklerEngine implements ActionListener {
     JsonElement command = new JsonObject();
     JsonParser jp;
     ProgramObject cmdObj;
-
     int index = 1;
 
     SprinklerEngine(Main parent) {
@@ -28,57 +28,39 @@ public class SprinklerEngine implements ActionListener {
         System.out.println("Initialized Sprinkler Engine");
     }
 
-
-
-    @
-    SuppressWarnings("unchecked")
+    @    SuppressWarnings("unchecked")
+    
     public void actionPerformed(ActionEvent e) {
-
         Object acted = e.getSource();
+        
         if (acted == parent.connect) {
-
             parent.enable(true);
+            
             if (net == null) {
+            	
                 try {
-
                     net = new Networking(parent.getAddress(), Integer.parseInt(parent.getPort()));
                     parent.setConnStatus(" Connected");
                     String str = net.receive();
                     command = jp.parse(str);
-                    //command.add("programlist", jp.parse(str));
                     System.out.println(command.toString());
                     System.out.println(str);
                     cmdObj = new ProgramObject();
-                    cmdObj.programlist = gp.fromJson(str,
-                        SingleProgram[].class);
-
+                    cmdObj.programlist = gp.fromJson(str, SingleProgram[].class);
                     parent.setProgram(cmdObj, parent.programs.getSelectedIndex());
-
                     System.out.println(str);
-
-
                 } catch (IOException e1) {
                     parent.setConnStatus(" Could not connect");
-
                     System.out.println("O noes! something went wrong connecting to the server!" + "\n IOException" + e1);
                     parent.write("System Output: Could not connect " + e1);
                 } catch (ParseException pe1) {
                     System.out.println("There was an error in the recieved program...");
                     parent.write("Error in recived program");
-
                 }
             }
-
         }
-
-
-
-
-        if (acted == parent.StartTime) {
-            //System.out.println("edited start time to "+ parent.getStartTime();
-           // cmdObj.programlist[parent.getProgramIndex()].start = parent.getStartTime();
-        }
-
+        
+        if (acted == parent.StartTime) {/*do nothing*/}
 
         if (acted == parent.send) {
 
@@ -94,6 +76,7 @@ public class SprinklerEngine implements ActionListener {
         }
 
         if (acted == parent.disconnect) {
+        	
             try {
                 net.close();
                 net = null;
@@ -107,8 +90,6 @@ public class SprinklerEngine implements ActionListener {
             }
             parent.setConnStatus(" Not Connected");
         }
-
-
 
         if (acted == parent.programs) {
             cmdObj.programlist[index].days = parent.getDays();
@@ -133,22 +114,23 @@ public class SprinklerEngine implements ActionListener {
 
         if (acted == parent.update) {
         	 cmdObj.programlist[index].start = parent.getStartTime();
-
+        	 cmdObj.programlist[index].days = parent.getDays();
+        	 cmdObj.programlist[index].times = parent.getTimes();
             System.out.println(cmdObj.programlist);
             int k = 0;
             for (SingleProgram singlep : cmdObj.programlist) {
                 System.out.println("Printing days");
               
-                singlep.days = parent.getDays(k);
+                //singlep.days = parent.getDays(k);
 
-                for (String gtime : parent.getTimes(k)) {
+                for (String gtime : parent.getTimes()) {
                     try {
                         if (Integer.parseInt(gtime) > 15) {}
                         parent.write("WARNING: TIME IS SET LONG! TIME IS OVER 15 MINUTES!!");
                     } catch (NumberFormatException nfe) {}
                 }
 
-              singlep.times = parent.getTimes(k);
+             // singlep.times = parent.getTimes(k);
             }
             cmdObj.type = "program";
 
@@ -170,31 +152,6 @@ public class SprinklerEngine implements ActionListener {
                 System.out.println("Not connected: " + npe1);
                 parent.write("System Output: Not Connected: " + npe1);
             }
-
-
-
-
         }
-
-
-
-
-
-
-
-        /*Object src = e.getSource();
-		 System.out.println("derp");
-		 if (src == parent.send){
-			 System.out.println("send");
-		 }
-		 */
-        //String clickedButtonLabel = clickedButton.getText();
-
-
-        // JOptionPane.showConfirmDialog(null,
-        //	 "You just pressed"+clickedButtonLabel,
-        //	 "test:",JOptionPane.PLAIN_MESSAGE);
-
     }
-
 }
